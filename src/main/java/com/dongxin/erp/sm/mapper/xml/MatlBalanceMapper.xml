@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.sm.mapper.MatlBalanceMapper">
+
+
+    <!--删除当天的日结存, 定时任务-->
+    <delete id="delBalanceByNow">
+        delete
+        from tsm_matl_balance
+        where voucher_date = curdate()
+    </delete>
+
+
+    <!--添加当天的日结存, 定时任务-->
+    <insert id="addRecords">
+        INSERT INTO tsm_matl_balance(create_time, to_tbd_node_id, tbd_material_id, voucher_date, in_qty, out_qty,
+                                     del_flag, tenant_id)
+        SELECT now() now,
+               to_tbd_node_id,
+               tbd_material_id,
+               post_time,
+               sum(in_qty),
+               sum(out_qty),
+               del_flag,
+               tenant_id
+        FROM tsm_waste_book
+        WHERE del_flag = 0
+          AND post_time = curdate()
+        GROUP BY now,
+                 to_tbd_node_id,
+                 tbd_material_id,
+                 post_time,
+                 del_flag,
+                 tenant_id
+    </insert>
+
+
+    <!--删除指定日期的日结存-->
+    <delete id="delRecords">
+        delete
+        from tsm_matl_balance
+        where voucher_date in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            DATE_FORMAT(#{item},'%Y-%m-%d')
+        </foreach>
+        and del_flag = 0
+    </delete>
+
+    <!--重新添加日结存-->
+    <insert id="reAddRecords">
+        INSERT INTO tsm_matl_balance(create_time, to_tbd_node_id, tbd_material_id, voucher_date, in_qty, out_qty,
+        del_flag)
+        SELECT now(), a, b, c, sum(d), sum(e), f
+        FROM (SELECT to_tbd_node_id a,
+        tbd_material_id b,
+        post_time c,
+        sum(in_qty) d,
+        sum(out_qty) e,
+        del_flag f
+        FROM tsm_waste_book
+        WHERE del_flag = 0
+        AND post_time in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            DATE_FORMAT(#{item},'%Y-%m-%d')
+        </foreach>
+        GROUP BY to_tbd_node_id,
+        tbd_material_id,
+        post_time,
+        del_flag,
+        tenant_id
+        ) g
+        GROUP BY a, b, c, f,tenant_id
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.mm.mapper.PlanDtlMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tmm_plan_dtl 
+		WHERE
+			 tmm_plan_id = #{mainId} 	</delete>
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.mm.entity.PlanDtl">
+		SELECT * 
+		FROM  tmm_plan_dtl
+		WHERE
+			 tmm_plan_id = #{mainId} 	</select>
+	<select id="selectPurchaseDetail" resultType="com.dongxin.erp.bm.entity.BiddingDtl">
+		select a.id id, b.code materiel_no,b.name materiel_name,a.matl_qty measure_num,b.tbd_unit_id measure_unit,
+		c.plan_number plan_no,c.voucher_time plan_date
+		from tmm_plan_dtl a,tbd_material b,tmm_plan c
+		where a.tbd_material_id = b.id and c.id=a.tmm_plan_id  and a.del_flag=0 and a.tenant_id=#{tenant} and b.tenant_id=#{tenant} and c.tenant_id=#{tenant}
+	</select>
+	<!--<select id="selectMaterial" resultType="map">
+		select id ,code
+		from tbd_material
+	</select>-->
+
+</mapper>

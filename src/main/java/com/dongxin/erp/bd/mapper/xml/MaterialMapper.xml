@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.bd.mapper.MaterialMapper">
+
+	<update id="updateTreeNodeStatus" parameterType="String">
+		update tbd_material set has_child = #{status} where id = #{id}
+	</update>
+	<select id="selectUnit" resultType="map">
+		select id,name
+		from tbd_unit
+		where tenant_id=#{tenant}
+	</select>
+	<select id="selectMaterialId" resultType="com.dongxin.erp.bd.entity.Material">
+		select a.*
+         from tbd_material a left join tbd_material_type b on a.material_type_id =b.id
+            where b.org_id=#{orgId}
+	</select>
+	<select id="selectMaterialPid" resultType="com.dongxin.erp.bd.entity.Material">
+		select *
+          from tbd_material
+            where id=#{materialId}
+	</select>
+</mapper>

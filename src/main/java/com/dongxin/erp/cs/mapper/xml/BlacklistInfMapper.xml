@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.cs.mapper.BlacklistInfMapper">
+
+    <select id="queryCsIdAndCsFlag" resultType="com.dongxin.erp.cs.entity.BlacklistInf">
+        select cs_id,cs_flag from tcs_blacklist_inf
+    </select>
+
+
+    <select id="queryBlacklist" resultType="map">
+        select a.id,a.cs_flag,b.cs_name from tcs_profile_type_level a,tcs_profile_inf b
+        where cs_id in (select id from tcs_profile_inf
+        where cs_name in
+       (select cs_id from tcs_blacklist_inf  where del_flag = 0) )and a.del_flag = 0 and a.cs_id=b.id
+    </select>
+    
+    <select id="queryCs" parameterType="String" resultType="String">
+        select id from tcs_profile_type_level
+        where cs_id in(select id from tcs_profile_inf where cs_name=(
+        select cs_id from tcs_blacklist_inf where id=#{id}
+        ))
+        and   cs_flag=#{cs_flag} and del_flag=0
+    </select>
+
+    <!--<select id="queryBcs" parameterType="String" resultType="String">
+        select id from tcs_profile_type_level
+        where cs_id =(select id from tcs_profile_inf where cs_name=(
+        select cs_id from tcs_blacklist_inf where id=#{id}
+        ))
+        and   cs_flag=#{cs_flag}
+    </select>-->
+
+    <!--通过List集合的id 查询到黑名单的数据-->
+    <select id="selectByIds" parameterType="List" resultType="com.dongxin.erp.cs.entity.BlacklistInf">
+        select * from tcs_blacklist_inf where id in
+        <foreach item="item" index="key" collection="list" open="(" separator="," close=")">
+                #{item}
+        </foreach>
+    </select>
+
+    <select id="queryTypeLevel" parameterType="String" resultType="com.dongxin.erp.cs.entity.ProfileTypeLevel">
+        select * from tcs_profile_type_level
+        where cs_id in (select id from tcs_profile_inf where cs_name = (
+        select cs_id from tcs_blacklist_inf where id=#{id}
+        ))
+        and   cs_flag=#{cs_flag}  and del_flag=0
+    </select>
+
+
+
+</mapper>

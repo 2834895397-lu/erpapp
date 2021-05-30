@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.cs.mapper.ProfileInfMapper">
+
+
+    <select id="getIdAndProvincesOrCitiesAndPid" resultType="map">
+		select id,province_or_city,pid from place
+	</select>
+
+
+	<select id="selectCs" resultType="com.dongxin.erp.cs.entity.ProfileInf" parameterType="String">
+		SELECT a.*,b.cs_flag,b.cs_type,b.cs_level
+        from tcs_profile_inf a LEFT JOIN tcs_profile_type_level b
+		on a.id=b.cs_id
+		where a.del_flag=0 and b.del_flag= 0 and b.cs_flag=#{cs_flag}
+		<if test="cs_code!=null" >
+			and cs_code=#{cs_code}
+		</if>
+		<if test="regis_place!=null">
+			and regis_place=#{regis_place}
+		</if>
+		<if test="cs_type!=null">
+			and cs_type=#{cs_type}
+		</if>
+		<if test="cs_level!=null">
+			and cs_level=#{cs_level}
+		</if>
+		<if test="cs_name!=null">
+			and cs_name like '%${cs_name}%'
+		</if>
+
+		and a.tenant_id=#{tenant_id} and b.tenant_id=#{tenant_id}
+
+		group by a.id,b.cs_flag,b.cs_type,b.cs_level
+		order by a.create_time desc
+
+	</select>
+
+
+	<select id="queryCsName" parameterType="String" resultType="String">
+		select cs_name from tcs_profile_inf where id=#{cs_id}
+	</select>
+
+    <select id="settleMaxNum" resultType="Long">
+      SELECT
+     MAX(cs_code)
+      FROM
+     tcs_profile_inf
+    </select>
+
+	<select id="settleMaxId" resultType="Long">
+      SELECT
+     MAX(id)
+      FROM
+     tcs_profile_inf_his
+    </select>
+
+    <!--通过客商代码查询id-->
+    <select id="queryId" resultType="String" parameterType="String">
+        select id from tcs_profile_inf where cs_code=#{cs_code}
+    </select>
+
+	<!--查询物料表的id，pid-->
+	<select id="queryAllMaterial" parameterType="String" resultType="map">
+		select id,pid from tbd_material
+	</select>
+
+	<!--根据cs_id以及cs_flag客商类型信息-->
+	<select id="queryByCsIdAndCsFlag" parameterType="String" resultType="String">
+		select id
+		from tcs_profile_type_level
+		where cs_id=#{cs_id} and cs_flag=#{cs_flag} and del_flag=0
+	</select>
+
+	<!--提供 给其他业务的客商查询，输出主表ID、客商CODE、客商名称-->
+	<select id="provideMessage" resultType="com.dongxin.erp.cs.entity.ProfileInf">
+		SELECT a.id,a.cs_code,a.cs_name,a.legal,a.regis_address,b.cs_flag,b.cs_type,b.cs_level
+		from tcs_profile_inf a LEFT JOIN tcs_profile_type_level b
+		on a.id=b.cs_id
+		where a.del_flag=0 and b.del_flag= 0 and cs_type!=3 and a.cs_code=#{cs_code} and a.cs_name=#{cs_name}
+	    and a.tenant_id=#{tenant_id} and b.tenant_id=#{tenant_id}
+		group by a.id,b.cs_flag,b.cs_type,b.cs_level
+	</select>
+
+	<!--根据数据的客商名称信息模糊查询  客商表的信息-->
+	<select id="fuzzyQueryByCsName" parameterType="String" resultType="com.dongxin.erp.cs.entity.ProfileInf">
+		select * from tcs_profile_inf where del_flag=0 and tenant_id=#{tenant_id}
+		<if test="cs_name!=null">
+			and cs_name like '%${cs_name}%'
+		</if>
+	</select>
+	
+	<!--履历表主表插入数据-->
+	<insert id="insertMainPageResume" parameterType="com.dongxin.erp.cs.entity.ProfileInf" >
+		insert into tcs_profile_inf_his
+		set create_by = #{profileInf.createBy},create_time = #{profileInf.createTime},update_by = #{profileInf.updateBy},
+		update_time = #{profileInf.updateTime},sys_org_code = #{profileInf.sysOrgCode},ver = #{profileInf.ver},
+		tenant_id = #{profileInf.tenantId},
+		hid = #{profileInf.id},cs_code = #{profileInf.csCode},cs_name = #{profileInf.csName},
+		legal = #{profileInf.legal},duty_sign = #{profileInf.dutySign},regis_place = #{profileInf.regisPlace},
+		regis_address = #{profileInf.regisAddress},conta_number = #{profileInf.contaNumber},
+		fax = #{profileInf.fax},email = #{profileInf.email},office_address = #{profileInf.officeAddress},
+		is_use= #{profileInf.isUse},is_check = #{profileInf.isCheck},checker = #{profileInf.checker},
+		operate_date = now(),id = #{profileInf.resumeId};
+	</insert>
+	
+	<select id="getProfileInfoByMainId" parameterType="String" resultType="com.dongxin.erp.cs.entity.ProfileInfo">
+	   select A.*,B.trustee_name,C.opening_bank,C.bank_account
+	   from tcs_profile_inf AS A 
+	   left join tcs_profile_poa AS B on A.id = B.cs_id  and B.del_flag = 0 
+	   left join tcs_profile_bank AS C on A.id = C.cs_id and C.del_flag = 0
+	   where A.id = #{mainId} and A.tenant_id=#{tenantId} 
+	   and A.del_flag = 0 LIMIT 1
+	</select>
+
+
+
+
+
+</mapper>

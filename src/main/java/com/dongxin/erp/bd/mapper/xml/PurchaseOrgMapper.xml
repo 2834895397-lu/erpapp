@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.bd.mapper.PurchaseOrgMapper">
+<select id="selectDepart" resultType="map">
+    select id,depart_name
+      from sys_depart
+     where id=#{id} and del_flag=0
+</select>
+    <select id="selectPurchaseOrg" resultType="String">
+        select org_name
+         from tbd_purchase_org
+            where depart_id=#{ids} and del_flag=0
+    </select>
+    <select id="selectDepartName" resultType="String">
+        select depart_name
+        from sys_depart
+        where id=#{ids} and del_flag=0
+    </select>
+</mapper>

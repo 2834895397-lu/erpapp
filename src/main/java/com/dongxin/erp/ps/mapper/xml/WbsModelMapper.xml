@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.ps.mapper.WbsModelMapper">
+
+    <!-- 获取wbs模板列表 -->
+	<select id="queryModelList" parameterType="String"
+		resultType="com.dongxin.erp.ps.entity.WbsModel">
+		select * from tps_wbs_model
+		where tenant_id = #{tenant} and
+		del_flag = '0'
+		and ( parent_id = '' or parent_id is null)
+	</select>
+	
+	<!-- 根据父节点id获取孩子记录  -->
+	<select id="queryWbsChildByParentId" parameterType="String"
+		resultType="com.dongxin.erp.ps.entity.ProjectCostInfo">
+		SELECT A.id,B.id AS wbsTypeId,B.wbs_type_name,'0' AS cost
+		FROM tps_wbs_model AS A
+		left join tbd_wbs_type AS B ON A.wbs_type_code = B.id AND A.tenant_id = B.tenant_id
+		AND B.del_flag = 0 AND B.status_flag = 1 
+		WHERE a.parent_id = #{id} and a.tenant_id = #{tenant}
+		and a.del_flag = 0 and  a.wbs_type_code is not null
+   </select>
+   
+   <!-- 根据模板id获取所有节点 
+   <select id="selectWbsModelNodeByModelId" parameterType="String" resultType="com.dongxin.erp.ps.entity.WbsModel">
+    SELECT t3.*
+     FROM
+	 (
+		SELECT t1.*,IF ( find_in_set( parent_id, @pids ) > 0,@pids := concat(@pids, ',', id),0) AS ischild
+		FROM
+			( SELECT t.*
+				FROM tps_wbs_model t WHERE t.del_flag = 0 and tenant_id = #{tenant} ORDER BY parent_id,id
+			) t1,
+			( SELECT @pids := #{id} ) t2
+	 ) t3
+      WHERE ischild != 0
+   </select>
+  -->
+
+</mapper>

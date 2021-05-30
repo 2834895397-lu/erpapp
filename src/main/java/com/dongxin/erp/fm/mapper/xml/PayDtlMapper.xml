@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.fm.mapper.PayDtlMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tfm_pay_dtl 
+		WHERE
+			 pay_id = #{mainId} 	</delete>
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.fm.entity.PayDtl">
+		SELECT * 
+		FROM  tfm_pay_dtl
+		WHERE
+			 pay_id = #{mainId} 	</select>
+</mapper>

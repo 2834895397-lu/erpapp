@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.cs.mapper.ProfileTypeLevelMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tcs_profile_type_level 
+		WHERE
+			 cs_id = #{mainId} 
+	</delete>
+
+
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.cs.entity.ProfileTypeLevel">
+		SELECT * 
+		FROM  tcs_profile_type_level
+		WHERE
+			 cs_id = #{mainId} 
+	</select>
+
+	<select id="queryCsByCsId" parameterType="String" resultType="com.dongxin.erp.cs.entity.ProfileTypeLevel">
+		select *
+		from tcs_profile_type_level
+		where cs_id = #{cs_id}  and del_flag = 0
+	</select>
+
+	<select id="settleMaxId" resultType="Long">
+      SELECT
+     MAX(id)
+      FROM
+     tcs_profile_type_level_his
+    </select>
+
+	<insert id="insertCsTypeResume" parameterType="com.dongxin.erp.cs.entity.ProfileTypeLevel">
+		insert into tcs_profile_type_level_his
+		set create_by = #{profileTypeLevel.createBy},create_time = #{profileTypeLevel.createTime},
+		update_by = #{profileTypeLevel.updateBy},update_time = #{profileTypeLevel.updateTime},
+		sys_org_code = #{profileTypeLevel.sysOrgCode},ver = #{profileTypeLevel.ver},
+		tenant_id = #{profileTypeLevel.tenantId},
+
+		cs_flag  = #{profileTypeLevel.csFlag},
+		cs_type = #{profileTypeLevel.csType},cs_level  = #{profileTypeLevel.csLevel},
+
+		hcs_id = #{profileTypeLevel.csId},
+		cs_id = #{profileTypeLevel.resumeCsId},
+		hid = #{profileTypeLevel.id},
+		effective_time = #{profileTypeLevel.effectiveTime},
+		id=#{profileTypeLevel.resumeId}, operate_date=now();
+
+	</insert>
+
+	<select id="selectResume" parameterType="String" resultType="com.dongxin.erp.cs.vo.ProfileTypeLevelHis">
+		select id,cs_type,cs_level,effective_time from tcs_profile_type_level_his
+		where hcs_id = #{cs_id} and cs_flag = #{cs_flag} and tenant_id=#{tenant_id} order by id desc
+    </select>
+
+</mapper>

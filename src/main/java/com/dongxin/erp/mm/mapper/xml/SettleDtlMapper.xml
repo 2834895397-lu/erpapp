@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.mm.mapper.SettleDtlMapper">
+
+	<!-- 通过采购结算id获取有效明细记录 -->
+	<select id="selectByMainId" parameterType="String"
+		resultType="com.dongxin.erp.mm.entity.SettleDtl">
+		<!-- SELECT * FROM tmm_settle_dtl left join WHERE del_flag = 0 and tmm_settle_id 
+			= #{mainId} and tenant_id=#{tenant} -->
+
+		SELECT A.*,B.contract_number as contractNumber,C.`code` as materialCode, E.matl_in_number as matlInNumber
+		FROM tmm_settle_dtl as A
+		left join tmm_contract as B on A.tmm_contract_id = B.id
+		left join TBD_MATERIAL as C on A.tbd_material_id = C.id
+		left join tsm_matl_in_order_dtl AS D on A.tsm_matl_in_order_dtl_id = D.id
+        LEFT JOIN tsm_matl_in_order AS E on D.tsm_matl_in_order_id = E.id
+		WHERE A.del_flag = 0
+		AND A.tmm_settle_id = #{mainId}
+		AND A.tenant_id=#{tenant}
+
+	</select>
+
+	<select id="selectContractNumber" resultType="map">
+		select
+		A.id,B.contract_number
+		from tmm_contract_dtl as A,tmm_contract as B
+		where A.tmm_contract_id=B.id and A.del_flag=0 and B.del_flag=0
+	</select>
+
+	<select id="getSettleDtlById" parameterType="String"
+		resultType="com.dongxin.erp.mm.entity.SettleDtl">
+		SELECT * FROM tmm_settle_dtl WHERE id = #{id} and
+		tenant_id=#{tenant}
+	</select>
+
+	<!-- 更新记录为有效 -->
+	<update id="updateDelFlagById" parameterType="String">
+		update
+		tmm_settle_dtl
+		set del_flag = 0
+		where id = #{id} and tenant_id=#{tenant}
+	</update>
+	
+	<select id="getVoucherTime" parameterType="String" resultType="Date">
+	  select a.voucher_time from tsm_matl_in_order as a
+       INNER JOIN tsm_matl_in_order_dtl AS b on a.id = b.tsm_matl_in_order_id
+       where b.id = #{id}
+	</select>
+
+</mapper>

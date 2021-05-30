@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.ps1.mapper.TpsContractFundMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tps_contract_fund 
+		WHERE
+			 contract_id = #{mainId} 
+	</delete>
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.ps1.entity.TpsContractFund">
+		SELECT * 
+		FROM  tps_contract_fund
+		WHERE
+			 contract_id = #{mainId} 
+	</select>
+</mapper>

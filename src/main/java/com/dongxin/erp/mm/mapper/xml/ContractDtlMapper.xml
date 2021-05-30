@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.mm.mapper.ContractDtlMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tmm_contract_dtl 
+		WHERE
+			 tmm_contract_id = #{mainId} 	</delete>
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.mm.entity.ContractDtl">
+		SELECT * 
+		FROM  tmm_contract_dtl
+		WHERE
+			 tmm_contract_id = #{mainId} 	</select>
+
+	<select id="selectPlanNumber" resultType="map">
+		select A.id,B.plan_number
+		from tmm_plan_dtl as A,tmm_plan as B
+		where A.tmm_plan_id=B.id and A.del_flag=0 and B.del_flag=0
+</select>
+
+	<select id="checkMessage" resultType="map">
+	select a.name,a.id,b.material_type_name,a.material_type_id,b.org_id
+	from tbd_material as a,tbd_material_type as b
+	where a.material_type_id=b.id and a.del_flag=0 and b.del_flag=0 and
+		a.material_type_id=#{tbdMaterialId} and b.org_id=#{purchaseOrgn}
+</select>
+	<select id="selectPrice" parameterType="String" resultType="com.dongxin.erp.mm.entity.ContractDtl">
+		select matl_qty,matl_price
+		from tmm_contract_dtl
+		where tmm_contract_id=#{id}
+	</select>
+</mapper>

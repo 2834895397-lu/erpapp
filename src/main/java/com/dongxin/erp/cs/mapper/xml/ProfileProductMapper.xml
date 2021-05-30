@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.cs.mapper.ProfileProductMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tcs_profile_product 
+		WHERE
+			 cs_id = #{mainId} 
+	</delete>
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.cs.entity.ProfileProduct">
+		SELECT * 
+		FROM  tcs_profile_product
+		WHERE
+			 cs_id = #{mainId} 
+	</select>
+
+	<select id="translateProduct" resultType="map">
+		select id,name from tbd_material
+	</select>
+
+	<!--<select id="queryBusiProduct" parameterType="String" resultType="com.dongxin.erp.cs.vo.BusiProduct">
+        select name as text,id as value
+        from tbd_material
+        where pid=#{id}
+    </select>-->
+	<select id="getIdAndPidAndName" resultType="map">
+		select id,pid from tbd_material
+	</select>
+
+</mapper>

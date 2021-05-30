@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.bm.mapper.BiddingEnterpriseMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tbm_bidding_enterprise 
+		WHERE
+			 bidding_inf_id = #{mainId} 	</delete>
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.bm.entity.BiddingEnterprise">
+		SELECT * 
+		FROM  tbm_bidding_enterprise
+		WHERE del_flag = 0 and  bidding_inf_id = #{mainId} 	
+	</select>
+
+	<select id="selectBiddingPrice" parameterType="String" resultType="com.dongxin.erp.bm.entity.BiddingPrice">
+		select *
+		from tbm_bidding_price
+		where bidding_enterprise_id=#{id} and tenant_id=#{tenant}
+	</select>
+
+    <!-- 根据id获取记录 -->
+	<select id="getBiddingEnterpriseById" parameterType="String" resultType="com.dongxin.erp.bm.entity.BiddingEnterprise">
+		select *
+		from tbm_bidding_enterprise
+		where id = #{id} and tenant_id=#{tenant}
+	</select>
+	
+	<!-- 根据id更新为有效记录 -->
+	<update id="updateDelFlagById" parameterType="String" >
+       update tbm_bidding_enterprise 
+       set del_flag = 0
+       where id = #{id} and tenant_id=#{tenant}
+   </update>
+</mapper>

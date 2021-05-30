@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.bm.mapper.BiddingDtlMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tbm_bidding_dtl 
+		WHERE
+			 bidding_inf_id = #{mainId} 	</delete>
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.bm.entity.BiddingDtl">
+		SELECT * 
+		FROM  tbm_bidding_dtl
+		WHERE
+			del_flag = 0 and  bidding_inf_id = #{mainId} and tenant_id=#{tenant}	</select>
+<!--报价申请表信息的条件-->
+	<select id="selectDtl"  resultType="com.dongxin.erp.bm.entity.CompanyOffer">
+
+		<!--select a.id bidding_detail_id,a.materiel_name materiel_name,a.measure_num measure_num,a.measure_unit measure_unit
+		from tbm_bidding_dtl a
+		where a.bidding_inf_id= #{pId} -->
+					SELECT
+			 a.bidding_inf_id,
+			 a.id as bidding_detail_id,
+			 b.id,
+			 a.materiel_name,
+			 a.materiel_no,
+			 CASE
+			  WHEN b.offer_price IS NULL THEN 0
+			    ELSE b.offer_price
+			 END AS offer_price,
+			 b.bidding_enterprise_id,
+			CASE
+			  WHEN b.offer_num IS NULL THEN
+			  a.measure_num ELSE b.offer_num
+			 END AS offer_num,
+			 a.measure_num,
+			 a.measure_unit
+			FROM
+			 tbm_bidding_dtl a
+			 LEFT JOIN tbm_bidding_price b
+			 ON a.id = b.bidding_detail_id and b.del_flag=0 and b.bidding_enterprise_id=#{biddingEnterprise.id} and b.tenant_id = #{biddingEnterprise.tenantId}
+			WHERE
+			 bidding_inf_id = #{biddingEnterprise.biddingInfId} and a.tenant_id = #{biddingEnterprise.tenantId}
+
+	</select>
+	<select id="selectUnit" resultType="map">
+		select id ,name
+		from tbd_unit
+        where tenant_id=#{tenant}
+	</select>
+
+   <select id="selctId"  resultType="com.dongxin.erp.bm.entity.BiddingDtl" >
+select a.id id, b.code materiel_no,b.name materiel_name,a.matl_qty measure_num,b.tbd_unit_id measure_unit,
+	   c.plan_number plan_no,c.voucher_time plan_date
+		from tmm_plan_dtl a,tbd_material b,tmm_plan c
+	   where a.tbd_material_id = b.id and c.id=a.tmm_plan_id  and a.del_flag=0
+		<if test="id!=null">
+			and c.plan_number like '%${id}%'
+		</if>
+
+	   <if test="beginTime!=null and endTime!=null">
+		   and c.voucher_time between #{beginTime} and #{endTime}
+	   </if>
+
+	   <if test="beginTime!=null and endTime==null">
+		   and c.voucher_time &gt;= #{beginTime}
+	   </if>
+
+	   <if test="beginTime==null and endTime!=null">
+		   and c.voucher_time &lt;= #{endTime}
+	   </if>
+
+   </select>
+
+   <!-- 根据招投标号和物料号查询招标明细信息记录 -->
+   <select id="selectOneByBiddingInfIdAndMaterielNo" resultType="com.dongxin.erp.bm.entity.BiddingDtl">
+     SELECT * FROM  tbm_bidding_dtl
+	  WHERE bidding_inf_id = #{biddingInfId}
+	  and materiel_no = #{materielNo}
+	  and del_flag = 0
+	  and tenant_id=#{tenant}
+   </select>
+
+   <select id="getBiddingDtlById" parameterType="String" resultType="com.dongxin.erp.bm.entity.BiddingDtl">
+    SELECT * FROM  tbm_bidding_dtl WHERE id = #{id} and tenant_id=#{tenant}
+   </select>
+
+    <update id="updateDelFlagById" parameterType="String" >
+       update tbm_bidding_dtl
+       set del_flag = 0
+       where id = #{id} and tenant_id=#{tenant}
+   </update>
+
+</mapper>

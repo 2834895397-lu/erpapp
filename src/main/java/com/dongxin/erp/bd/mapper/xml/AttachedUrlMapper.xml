@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.bd.mapper.AttachedUrlMapper">
+
+    <!-- 根据id更新为有效记录 -->
+	<update id="updateDelFlagById" parameterType="String" >
+       update tbd_attached_url
+       set del_flag = 0
+       where id = #{id} and tenant_id=#{tenant}
+   </update>
+   
+   <select id="selectOne"  resultType="com.dongxin.erp.bd.entity.AttachedUrl">
+      select * from tbd_attached_url
+      where relation_id = #{param1}
+      and url = #{param2}
+      and sort = #{param3}
+      and tenant_id=#{param4}
+   </select>
+
+</mapper>

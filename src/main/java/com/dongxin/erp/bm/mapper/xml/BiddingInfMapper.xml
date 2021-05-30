@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.bm.mapper.BiddingInfMapper">
+    <select id="selectUser" parameterType="String" resultType="String">
+        select org_code
+         from sys_user
+         where id =#{id}
+    </select>
+
+<!--   <select id="selectBiddingInf" resultType="com.dongxin.erp.bm.entity.BiddingInf">
+       select a.*
+       from tbm_bidding_inf a
+       where del_flag=0
+       <if test="biddingTitle!=null" >
+           and a.bidding_title like '%${biddingTitle}%'
+       </if>
+     <if test="biddingDepaterment!=null" >
+       and a.bidding_depaterment like '%${biddingDepaterment}%'
+   </if>
+
+   </select>-->
+ <!--  模糊查询 范围查询-->
+    <select id="biddingQuery"  resultType="com.dongxin.erp.bm.entity.BiddingInf">
+     select * from tbm_bidding_inf
+            where del_flag = 0 and tenant_id=#{tenant}
+        <if test="beginTime!=null and endTime!=null">
+                and open_bidding_date between #{beginTime} and #{endTime}
+       </if>
+
+        <if test="beginTime!=null and endTime==null">
+            and open_bidding_date &gt;= #{beginTime}
+        </if>
+
+        <if test="beginTime==null and endTime!=null">
+            and open_bidding_date &lt;= #{endTime}
+        </if>
+
+        <if test="bTime!=null and eTime!=null">
+            and end_bidding_date between #{bTime} and #{eTime}
+        </if>
+
+        <if test="bTime!=null and eTime==null">
+            and end_bidding_date &gt;= #{bTime}
+        </if>
+
+        <if test="bTime==null and eTime!=null">
+            and end_bidding_date &lt;= #{eTime}
+        </if>
+
+        <if test="biddingTitle!=null" >
+            and bidding_title like '%${biddingTitle}%'
+        </if>
+
+        <if test="biddingDepaterment!=null" >
+            and bidding_depaterment like '%${biddingDepaterment}%'
+        </if >
+
+        </select>
+
+</mapper>

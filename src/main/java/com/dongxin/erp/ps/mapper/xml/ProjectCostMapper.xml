@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.ps.mapper.ProjectCostMapper">
+
+	<delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tps_project_cost 
+		WHERE
+			 project_id = #{mainId} 
+	</delete>
+	
+	<select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.ps.entity.ProjectCost">
+		SELECT * 
+		FROM  tps_project_cost
+		WHERE
+			 project_id = #{mainId} 
+	</select>
+	
+	<select id="selectCostById" parameterType="String" resultType="com.dongxin.erp.ps.entity.ProjectCost">
+	   SELECT * 
+		FROM  tps_project_cost
+		WHERE id = #{id} 
+	</select>
+	
+	<select id="getProjectCostByProjectId" parameterType="String" resultType="com.dongxin.erp.ps.entity.ProjectCostInfo">
+	  select A.id,A.project_id,A.wbs_type_id,A.cost,B.wbs_type_name
+	  from tps_project_cost AS A
+	  left join tbd_wbs_type AS B on A.wbs_type_id = B.id
+	  and A.tenant_id = B.tenant_id 
+	  where A.project_id = #{projectId}  and A.tenant_id = #{tenant}
+	  and A.del_flag = '0'
+	</select>
+	
+	<update id="updateDelFlag" parameterType="String">
+	   update tps_project_cost set del_flag = '0'
+	   where  id = #{id} 
+	</update>
+</mapper>

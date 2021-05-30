@@ -1,0 +1,51 @@
+package ${bussiPackage}.${entityPackage}.service;
+
+import ${bussiPackage}.${entityPackage}.entity.${entityName};
+<#list subTables as sub>
+import ${bussiPackage}.${entityPackage}.entity.${sub.entityName};
+</#list>
+<#list subTables as sub>
+import ${bussiPackage}.${entityPackage}.service.${sub.entityName}Service;
+</#list>
+import ${bussiPackage}.${entityPackage}.mapper.${entityName}Mapper;
+import org.springframework.stereotype.Service;
+import org.jeecg.common.system.base.service.BaseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Collection;
+
+/**
+ * @Description: ${tableVo.ftlDescription}
+ * @Author: jeecg-boot
+ * @Date:   ${.now?string["yyyy-MM-dd"]}
+ * @Version: V1.0
+ */
+@Service
+public class ${entityName}Service extends BaseService<${entityName}Mapper, ${entityName}>{
+
+	<#list subTables as sub>
+	@Autowired
+	private ${sub.entityName}Service ${sub.entityName?uncap_first}Service;
+	</#list>
+
+	@Transactional
+	public void delMain(String id) {
+		<#list subTables as sub>
+		${sub.entityName?uncap_first}Service.deleteBatchByMainId(id);
+		</#list>
+		logicDeleteById(id);
+	}
+
+	@Transactional
+	public void delBatchMain(Collection<? extends Serializable> idList) {
+		for(Serializable id:idList) {
+			<#list subTables as sub>
+			${sub.entityName?uncap_first}Service.deleteBatchByMainId(id.toString());
+			</#list>
+			logicDeleteById(id);
+		}
+	}
+	
+}

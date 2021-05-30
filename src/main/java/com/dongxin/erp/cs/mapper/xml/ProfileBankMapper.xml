@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxin.erp.cs.mapper.ProfileBankMapper">
+
+    <delete id="deleteByMainId" parameterType="String">
+		DELETE 
+		FROM  tcs_profile_bank 
+		WHERE
+			 cs_id = #{mainId} 
+	</delete>
+
+    <select id="selectByMainId" parameterType="String" resultType="com.dongxin.erp.cs.entity.ProfileBank">
+		SELECT * 
+		FROM  tcs_profile_bank
+		WHERE
+			 cs_id = #{mainId} 
+	</select>
+
+    <select id="queryBankByCsId" parameterType="String" resultType="com.dongxin.erp.cs.entity.ProfileBank">
+		select *
+		from tcs_profile_bank
+		where cs_id = #{cs_id}  and del_flag = 0
+	</select>
+
+	<select id="settleMaxId" resultType="Long">
+      SELECT  MAX(id) FROM tcs_profile_bank_his
+    </select>
+
+    <insert id="insertBankResume" parameterType="com.dongxin.erp.cs.entity.ProfileBank">
+		insert into tcs_profile_bank_his
+		set create_by = #{profileBank.createBy},create_time = #{profileBank.createTime},
+			update_by = #{profileBank.updateBy},update_time = #{profileBank.updateTime},
+			sys_org_code = #{profileBank.sysOrgCode},ver = #{profileBank.ver},
+			tenant_id = #{profileBank.tenantId},
+
+			cs_id=#{profileBank.resumeCsId},cs_flag= #{profileBank.csFlag},
+			opening_bank= #{profileBank.openingBank},bank_account= #{profileBank.bankAccount},
+			registered_address= #{profileBank.registeredAddress},
+			contact_number= #{profileBank.contactNumber},fax= #{profileBank.fax},hid= #{profileBank.id},
+			operate_date=now(),hcs_id=#{profileBank.csId},
+			id=#{profileBank.resumeId};
+	</insert>
+
+
+
+
+</mapper>
